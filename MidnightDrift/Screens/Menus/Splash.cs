@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,30 @@ using Whirlpool.Core.Render;
 
 namespace MidnightDrift.Game.Screens.Menus
 {
-    public class Splash
+    public class Splash : Screen
     {
-        public Vector2 windowSize;
         public Texture splashScreenTexture;
-        public void Init(Vector2 windowSize_)
+        Material mat;
+        public override void Init()
         {
-            windowSize = windowSize_;
             splashScreenTexture = TextureLoader.LoadAsset("Content\\Screens\\Splash\\notice.png");
+            mat = new MaterialBuilder()
+                .Build()
+                .SetName("Default Sprite Material")
+                .Attach(new Shader("Shaders\\2DOpacity\\vert.glsl", ShaderType.VertexShader))
+                .Attach(new Shader("Shaders\\2DOpacity\\frag.glsl", ShaderType.FragmentShader))
+                .Link()
+                .GetMaterial();
         }
-        public void Render(float seconds)
+        public override void Update()
+        {
+        }
+        public override void Render()
         {
             var opacity = (Time.GetMilliseconds() >= 5000) ? 1.0f - ((Time.GetMilliseconds() - 5000.0f) / 1000) : 1.0f;
-            Render2D.DrawQuad(new OpenTK.Vector2(0, 0), new OpenTK.Vector2(windowSize.X, windowSize.Y), splashScreenTexture);
+            mat.SetVariable("Tint", Color4.White);
+            mat.SetVariable("Opacity", opacity);
+            Render2D.DrawQuad(new OpenTK.Vector2(0, 0), new OpenTK.Vector2(320, 240), splashScreenTexture, mat);
         }
     }
 }

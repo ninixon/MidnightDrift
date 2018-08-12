@@ -14,6 +14,6 @@ uniform float fogStrength;
 //----------------------------------------
 
 void main() {
-	frag_color = vec4(texture(renderedTexture, outTexCoord.xy));
+	frag_color = texture(renderedTexture, outTexCoord);
 }
 

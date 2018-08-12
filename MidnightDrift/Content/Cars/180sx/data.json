@@ -1,0 +1,60 @@
+{
+    "name": "Nissan 180SX '94",
+    "drag": 200,
+    "rollingResistance": 6000,
+    "mass": 1220,
+    "engineIncr": 100,
+    "engineDecr": 1000,
+    "brake": 10000,
+    "gearRatios": [
+        3.321,
+        1.902,
+        1.308,
+        1.000,
+        0.759,
+        3.382
+    ],
+    "torquePoints": {
+      "0": 0,
+      "500": 50,
+      "1000": 60,
+      "1500": 125,
+      "2000": 176,
+      "2500": 223,
+      "3000": 250,
+      "3500": 269,
+      "4000": 275, 
+      "4500": 272,
+      "5000": 265,
+      "5500": 253,
+      "6000": 241,
+      "6400": 210 
+    },
+    "differentialRatio": 3.916,
+    "transmissionEfficiency": 0.721,
+  "wheelRadius": 0.3135,
+  "wheelPositions": [
+    {
+      "X": -1.65,
+      "Y": 0.2,
+      "Z": 1.0
+    },
+    {
+      "X": -1.65,
+      "Y": 0.2,
+      "Z": -1.0
+    },
+    {
+      "X": 1.65,
+      "Y": 0.2,
+      "Z": 1.0
+    },
+    {
+      "X": -1.65,
+      "Y": 0.2,
+      "Z": -1.0
+    }
+  ],
+  "gearChangeUpperThreshold": 6000,
+  "gearChangeLowerThreshold": 2000
+}

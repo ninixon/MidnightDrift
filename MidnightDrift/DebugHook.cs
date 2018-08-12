@@ -1,68 +1,64 @@
-﻿using System;
+﻿#if DEBUG
+using MidnightDrift.Game.Vehicle;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Whirlpool.Core.IO;
+using Whirlpool.Core.Render;
+using Whirlpool.Core.Type;
 
 namespace MidnightDrift.Game
 {
     public static class DebugHook
     {
         public static bool enabled;
-        public static UdpClient server;
-        public static IPEndPoint clientEndPoint;
         public static float lastUpdate;
+
+        public static SceneObject[] sceneObjects;
+        public static Material[] materialObjects;
+        public static string debugData = "";
+        public static string consoleOutput = "";
+
         public static void Start()
         {
-            Logging.Write("Debug hook enabled.", LogStatus.Warning);
-            server = new UdpClient(31019);
+            Logging.Write("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", LogStatus.Warning);
+            Logging.Write("!!!            W A R N I N G            !!!", LogStatus.Warning);
+            Logging.Write("!!!        Debug mode is ENABLED.       !!!", LogStatus.Warning);
+            Logging.Write("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", LogStatus.Warning);
             enabled = true;
+
+            Logging.OnWrite += OnLog;
         }
 
-        public static void SendSceneData(SceneObject[] objects, SceneProperties properties)
+        public static void OnLog(object sender, LogEventArgs e)
+        {
+            consoleOutput += e.loggedStr + "\n";
+        }
+
+        public static void SendSceneData(SceneObject[] objects, Material[] materials, SceneProperties properties)
         {
             if (!enabled) return;
             if (Time.currentTime - lastUpdate <= 0.5f) return;
-            lastUpdate = Time.currentTime;
 
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 31019);
-            if (server.Available > 0) if (server.Receive(ref endPoint)[0] == 0xFF) { clientEndPoint = endPoint; Logging.Write("Debug hook client connected."); }
-            if (clientEndPoint == null) return;
-            server.Send(new byte[] { 0x00 }, 1, clientEndPoint);
+            sceneObjects = objects;
+            materialObjects = materials;
+            
+        }
 
-            {
-                List<byte> bytes = new List<byte>();
-                foreach (var variable in properties.GetType().GetFields())
-                {
-                    if (variable.GetValue(properties) == null) continue;
-                    foreach (byte b in Encoding.ASCII.GetBytes(variable.Name + "^" + variable.GetValue(properties).ToString()))
-                    {
-                        bytes.Add(b);
-                    }
-                    bytes.Add(Encoding.ASCII.GetBytes("\n")[0]);
-                }
-                server.Send(bytes.ToArray(), bytes.Count, clientEndPoint);
-            }
+        public static void ClearDebugData()
+        {
+            debugData = "";
+        }
 
-            foreach (var obj in objects)
-            {
-                List<byte> bytes = new List<byte>();
-                foreach (var variable in obj.GetType().GetFields())
-                {
-                    foreach (byte b in Encoding.ASCII.GetBytes(variable.Name + "^" + variable.GetValue(obj).ToString()))
-                    {
-                        bytes.Add(b);
-                    }
-                    bytes.Add(Encoding.ASCII.GetBytes("\n")[0]);
-                }
-                server.Send(bytes.ToArray(), bytes.Count, clientEndPoint);
-            }
-
-
-            server.Send(new byte[] { 0xFF }, 1, clientEndPoint);
+        public static void PushDebugData(string name, Any obj)
+        {
+            debugData += name + " = " + obj.GetValue().ToString() + "\n";
         }
     }
 }
+#endif

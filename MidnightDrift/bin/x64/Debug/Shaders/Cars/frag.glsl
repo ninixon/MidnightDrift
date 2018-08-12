@@ -28,8 +28,7 @@ uniform vec3 Rotation;
 //----------------------------------------
 
 void main() {
-	float ambientLightStrength = 1/2;
-	vec3 ambientBase = ambientLightStrength * MainLightTint.xyz;
+	vec3 ambientBase = AmbientLightStrength * MainLightTint.xyz;
 	vec3 normalizedNormal = normalize(outNormal);
 	vec3 lightDirection = normalize(MainLightPos - vec3(Model * vec4(outFragPos, 1)));
 	float diff = dot(normalizedNormal, lightDirection);
@@ -40,11 +39,11 @@ void main() {
 	vec4 mvpTex = MVP * vec4(outTexCoord + Rotation.xy, 1.0, 1.0);
 	
 	vec3 result = texture(AlbedoTexture, outTexCoord).xyz;
-	result = mix(result, texture(ReflectionTexture, vec2(mvpTex.x + (Position.z / 500), mvpTex.y + (-Position.x / 500) + 5) * 1.0).xyz, 0.5);
-	vec4 decalCol = texture(DecalTexture, outTexCoord);
-	if (decalCol.w > 0)
-		result = mix(result.xyz, decalCol.xyz, decalCol.w);
-
+	result = mix(result, texture(ReflectionTexture, vec2(mvpTex.x + (Position.z / 500), mvpTex.y + (-Position.x / 500) + 5) * 5.0).xyz, (1 - ((result.x + result.y + result.z) / 3)) / 6);
+//	vec4 decalCol = texture(DecalTexture, outTexCoord);
+//	if (decalCol.w > 0)
+//		result = mix(result.xyz, decalCol.xyz, decalCol.w);
+//
 	result = max((ambientBase + diffuseBase), 0.2) * result;
 
 	frag_color = vec4(result, 1.0);

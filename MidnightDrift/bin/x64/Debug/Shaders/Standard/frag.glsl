@@ -21,13 +21,13 @@ uniform vec4 MainLightTint;
 uniform float MainLightConstant;
 uniform float MainLightLinear;
 uniform float MainLightQuadratic;
+uniform vec4 AmbientLightTint;
 uniform float AmbientLightStrength;
 uniform vec3 Position;
 //----------------------------------------
 
 void main() { 
-	float ambientLightStrength = 0.2;
-	vec3 ambientBase = ambientLightStrength * MainLightTint.xyz;
+	vec3 ambientBase = AmbientLightStrength * AmbientLightTint.xyz;
 
 	vec3 normalizedNormal = normalize(outNormal);
 	vec3 lightDirection = normalize(MainLightPos - vec3(Model * vec4(outFragPos, 1)));
